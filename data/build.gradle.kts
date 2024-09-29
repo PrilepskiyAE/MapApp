@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -43,7 +44,8 @@ dependencies {
     implementation(libs.dagger.hilt)
     implementation(libs.room.roomKtx)
     implementation(libs.room.roomRuntime)
-    implementation(libs.room.roomKaptCompiler)
+    kapt(libs.room.roomKaptCompiler)
+    implementation(libs.gms.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_not_granted">Разрешение не предоставлено</string>
+    <string name="button_positive">Окей</string>
+    <string name="button_negative">Отмена</string>
+    <string name="add_point">Добавить метку</string>
+    <string name="delete_point">Удалить метку</string>
+    <string name="name_label_point">Имя метки</string>
+    <string name="label_point">Проложить маршрут</string>
+</resources>
