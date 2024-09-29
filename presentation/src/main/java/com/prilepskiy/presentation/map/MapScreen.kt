@@ -111,6 +111,19 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
             Lifecycle.Event.ON_START -> {
                 MapKitFactory.getInstance().onStart()
                 mapView.onStart()
+
+            }
+            Lifecycle.Event.ON_RESUME->{
+                mapView.mapWindow.map.addInputListener(object : InputListener {
+                    override fun onMapTap(p0: Map, p1: Point) {}
+
+                    override fun onMapLongTap(p0: Map, p1: Point) {
+                        viewModel.onIntent(MapIntent.OnCreateDialog(Pair(true, p1)))
+                    }
+
+                })
+                placeMarkMapCollection.value = state.tempPoints.toList()
+
             }
 
             Lifecycle.Event.ON_STOP -> {
@@ -147,6 +160,7 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
     }
     LaunchedEffect(key1 = state.tempPoints) {
         placeMarkMapCollection.value = state.tempPoints.toList()
+        addListener(placeMarkMapCollection, viewModel)
     }
     LaunchedEffect(key1 = points) {
         val drivingRouter =
@@ -233,7 +247,7 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                                 Triple(
                                     false,
                                     EMPTY_STRING,
-                                    null
+                                    myGeoObject.value
                                 )
                             )
                         )
@@ -252,7 +266,14 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                 modifier = Modifier,
                 factory = {
                     mapView.apply {
+                        mapWindow.map.addInputListener(object : InputListener {
+                            override fun onMapTap(p0: Map, p1: Point) {}
 
+                            override fun onMapLongTap(p0: Map, p1: Point) {
+                                viewModel.onIntent(MapIntent.OnCreateDialog(Pair(true, p1)))
+                            }
+
+                        })
                         mapWindow.map.move(
                             CameraPosition(
                                 Point(
@@ -284,19 +305,7 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                     placeMarkMapCollection.value.forEach {
                         it.redraw(context, it.geometry)
                     }
-                    placeMarkMapCollection.value.forEach {
-                        it.addTapListener(placemarkTapListener(it) {
-                            viewModel.onIntent(
-                                MapIntent.OnInfoDialog(
-                                    Triple(
-                                        true,
-                                        EMPTY_STRING,
-                                        it
-                                    )
-                                )
-                            )
-                        })
-                    }
+                    addListener(placeMarkMapCollection, viewModel)
                 }
             )
             MapInteractionButtons(
@@ -323,5 +332,24 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                 }
             )
         }
+    }
+}
+
+private fun addListener(
+    placeMarkMapCollection: MutableState<List<PlacemarkMapObject>>,
+    viewModel: MapViewModel
+) {
+    placeMarkMapCollection.value.forEach {
+        it.addTapListener(placemarkTapListener(it) {
+            viewModel.onIntent(
+                MapIntent.OnInfoDialog(
+                    Triple(
+                        true,
+                        EMPTY_STRING,
+                        it
+                    )
+                )
+            )
+        })
     }
 }
