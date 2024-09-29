@@ -123,7 +123,7 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
 
                 })
                 placeMarkMapCollection.value = state.tempPoints.toList()
-
+                addListener(placeMarkMapCollection, viewModel)
             }
 
             Lifecycle.Event.ON_STOP -> {
@@ -228,7 +228,10 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                         placeMarkMapCollection.value = temp
                         viewModel.onIntent(MapIntent.OnDeletePoint(it))
                         if (it.isValid) {
-                            mapView.mapWindow.map.mapObjects.remove(it)
+//                            try {
+//                                mapView.mapWindow.map.mapObjects.remove(it)
+//                            }catch (e:RuntimeException){}
+
                         }
                         viewModel.onIntent(
                             MapIntent.OnInfoDialog(
@@ -272,8 +275,8 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                             override fun onMapLongTap(p0: Map, p1: Point) {
                                 viewModel.onIntent(MapIntent.OnCreateDialog(Pair(true, p1)))
                             }
-
                         })
+                        addListener(placeMarkMapCollection, viewModel)
                         mapWindow.map.move(
                             CameraPosition(
                                 Point(
@@ -302,6 +305,19 @@ fun MapScreen(viewModel: MapViewModel = hiltViewModel()) {
                         }
 
                     })
+                    state.tempPoints.forEach {
+                        it.addTapListener(placemarkTapListener(it) {
+                            viewModel.onIntent(
+                                MapIntent.OnInfoDialog(
+                                    Triple(
+                                        true,
+                                        EMPTY_STRING,
+                                        it
+                                    )
+                                )
+                            )
+                        })
+                    }
                     placeMarkMapCollection.value.forEach {
                         it.redraw(context, it.geometry)
                     }
