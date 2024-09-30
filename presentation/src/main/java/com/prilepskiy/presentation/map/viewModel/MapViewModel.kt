@@ -53,7 +53,6 @@ class MapViewModel @Inject constructor(
                     onAction(MapAction.CreateTempPoints(intent.placemarkMapObject))
                 }
             }
-
             is MapIntent.OnCreateDialog -> onAction(MapAction.OnCreateDialog(intent.point))
             is MapIntent.CreateDbPoints -> {
                 viewModelScope.launch {
