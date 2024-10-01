@@ -13,39 +13,37 @@ sealed class MapIntent : MviIntent {
     data class OnError(val error: String?) : MapIntent()
     data class OnLoading(val isLoading: Boolean) : MapIntent()
     data object FetchCurrentLocation : MapIntent()
-    data class CreateTempPoints(val title: String, val placemarkMapObject: PlacemarkMapObject) :
+    data class CreateTempPoints(val point: PointModel) :
         MapIntent()
 
-    data class CreateDbPoints(val title: String, val placemarkMapObject: PlacemarkMapObject) :
+    data class CreateDbPoints(val title: String, val point: PointModel) :
         MapIntent()
 
 
-    data class OnCreateDialog(val point: Pair<Boolean, Point>) : MapIntent()
-    data class OnInfoDialog(val point: Triple<Boolean, String, PlacemarkMapObject?>) : MapIntent()
-    data class OnDeletePoint(val point: PlacemarkMapObject) : MapIntent()
+    data class OnCreateDialog(val point: Pair<Boolean, PointModel>) : MapIntent()
+    data class OnInfoDialog(val point: Pair<Boolean, PointModel>) : MapIntent()
+    data class OnDeletePoint(val point: PointModel) : MapIntent()
 }
 
 sealed class MapAction : MviAction {
     data class FetchCurrentLocation(val geolocationModel: GeolocationModel) : MapAction()
     data class OnError(val error: String?) : MapAction()
     data class OnLoading(val isLoading: Boolean) : MapAction()
-    data class CreateTempPoints(val placemarkMapObject: PlacemarkMapObject) : MapAction()
-    data class OnCreateDialog(val point: Pair<Boolean, Point>) : MapAction()
+    data class CreateTempPoints(val point: PointModel) : MapAction()
+    data class OnCreateDialog(val point: Pair<Boolean, PointModel>) : MapAction()
     data class InitDbPoint(val list: List<PointModel>) : MapAction()
-    data class OnInfoDialog(val point: Triple<Boolean, String, PlacemarkMapObject?>) : MapAction()
-    data class OnDeletePoint(val point: PlacemarkMapObject) : MapAction()
+    data class OnInfoDialog(val point: Pair<Boolean,  PointModel>) : MapAction()
+    data class OnDeletePoint(val point: PointModel) : MapAction()
 }
 
 data class MapState(
     val currentGeolocation: GeolocationModel? = null,
-    val tempPoints: Set<PlacemarkMapObject> = setOf(),
-    val dbPoints: List<PointModel> = listOf(),
+    val tempPoints: List<PointModel> = listOf(),
     val initLocation: Boolean = false,
-    val isCreateDialog: Pair<Boolean, Point> = Pair(false, Point()),
-    val isInfoDialog: Triple<Boolean, String, PlacemarkMapObject?> = Triple(
+    val isCreateDialog: Pair<Boolean, PointModel> = Pair(false, PointModel()),
+    val isInfoDialog: Pair<Boolean, PointModel> = Pair(
         false,
-        EMPTY_STRING,
-        null
+        PointModel()
     ),
     override val error: String? = null,
     override val isLoading: Boolean = false,
