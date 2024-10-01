@@ -24,7 +24,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.prilepskiy.common.EMPTY_STRING
 import com.prilepskiy.common.ZOOM_SEARCH
+import com.prilepskiy.domain.model.PointModel
 import com.prilepskiy.presentation.R
+import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.search.Address
 import com.yandex.mapkit.search.Response
@@ -38,11 +40,10 @@ import com.yandex.mapkit.search.ToponymObjectMetadata
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogInfoPoint(
-    onPositive: (point: PlacemarkMapObject) -> Unit,
-    onDelete: (point: PlacemarkMapObject) -> Unit,
+    onPositive: (point: PointModel) -> Unit,
+    onDelete: (point: PointModel) -> Unit,
     onNegative: () -> Unit,
-    point: PlacemarkMapObject,
-    title: String,
+    point: PointModel,
     dismissOnClickOutside: Boolean = true,
     dismissOnBackPress: Boolean = true,
 ) {
@@ -93,7 +94,7 @@ fun AlertDialogInfoPoint(
             SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
 
         LaunchedEffect(key1 = Unit) {
-            searchManager.submit(point.geometry, ZOOM_SEARCH, SearchOptions(), searchListener)
+            searchManager.submit(Point(point.latitude,point.longitude), ZOOM_SEARCH, SearchOptions(), searchListener)
         }
         Box(
             contentAlignment = Alignment.Center,
@@ -109,7 +110,7 @@ fun AlertDialogInfoPoint(
                         .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 8.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = title)
+                    Text(text = point.title)
                     Text(text = "${street.value} ${house.value} ${region.value}")
                     Button(
                         modifier = Modifier.fillMaxWidth(),

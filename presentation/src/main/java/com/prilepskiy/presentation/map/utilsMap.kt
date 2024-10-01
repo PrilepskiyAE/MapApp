@@ -3,6 +3,7 @@ package com.prilepskiy.presentation.map
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
+import com.prilepskiy.domain.model.PointModel
 import com.prilepskiy.presentation.R
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.Point
@@ -39,29 +40,27 @@ fun MapView.trackMyPosition(
 }
 
 fun MapView.createObject(
-    point: Point,
+    point: PointModel,
 ): PlacemarkMapObject {
     val result = mapWindow.map.mapObjects.addPlacemark {
-        it.geometry = point
+        it.geometry = Point(point.latitude,point.longitude)
     }
     return result
 }
 
 fun PlacemarkMapObject.redraw(
     context: Context,
-    point: Point,
+    point: PointModel,
 ) {
-    if (this.isValid) {
         val drawable = context.getDrawable(R.drawable.ic_target)
-        geometry = point
         drawable?.let {
             it.toBitmap().aRGBBitmap { bitmap ->
-                geometry = point
+                geometry = Point(point.latitude,point.longitude)
                 setIcon(ImageProvider.fromBitmap(bitmap))
             }
         }
     }
-}
+
 
 fun placemarkTapListener(plase: PlacemarkMapObject,onAction: (plase: PlacemarkMapObject) -> Unit) = MapObjectTapListener { _, point ->
     onAction.invoke(plase)

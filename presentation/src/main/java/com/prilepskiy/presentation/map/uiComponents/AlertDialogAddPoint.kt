@@ -24,15 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.prilepskiy.common.EMPTY_STRING
+import com.prilepskiy.domain.model.PointModel
 import com.prilepskiy.presentation.R
 import com.yandex.mapkit.geometry.Point
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogAddPoint(
-    onPositive: (point: Point, title: String) -> Unit,
+    onPositive: (point: PointModel) -> Unit,
     onNegative: () -> Unit,
-    point: Point,
+    point: PointModel,
     dismissOnClickOutside: Boolean = true,
     dismissOnBackPress: Boolean = true,
 ) {
@@ -76,7 +77,7 @@ fun AlertDialogAddPoint(
                     ) {
                         Button(
                             modifier = Modifier,
-                            onClick = { onPositive.invoke(point, titlePoint.value) },
+                            onClick = { onPositive.invoke(point.copy(title = titlePoint.value)) },
                             enabled = titlePoint.value.isNotEmpty()
                         ) {
                             Text(text = stringResource(id = R.string.button_positive))

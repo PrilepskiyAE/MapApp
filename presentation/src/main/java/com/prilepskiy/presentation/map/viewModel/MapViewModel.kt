@@ -43,43 +43,28 @@ class MapViewModel @Inject constructor(
             is MapIntent.FetchCurrentLocation -> fetchLocation()
             is MapIntent.CreateTempPoints -> {
                 viewModelScope.launch {
-                    addPointUseCase(
-                        PointModel(
-                            title = intent.title,
-                            longitude = intent.placemarkMapObject.geometry.longitude,
-                            latitude = intent.placemarkMapObject.geometry.latitude
-                        )
-                    )
-                    onAction(MapAction.CreateTempPoints(intent.placemarkMapObject))
+                    addPointUseCase(intent.point)
+                    onAction(MapAction.CreateTempPoints(intent.point))
                 }
             }
-
             is MapIntent.OnCreateDialog -> onAction(MapAction.OnCreateDialog(intent.point))
             is MapIntent.CreateDbPoints -> {
                 viewModelScope.launch {
-                    onAction(MapAction.CreateTempPoints(intent.placemarkMapObject))
+                    onAction(MapAction.CreateTempPoints(intent.point))
                 }
             }
 
             is MapIntent.OnInfoDialog -> {
                 viewModelScope.launch {
-                    var point = intent.point
-                    if (intent.point.second.isEmpty() && intent.point.first) {
-                        val dbEliment = getPointUseCase.invoke(
-                            point.third?.geometry?.latitude ?: DEFAULT_LOCATION,
-                            point.third?.geometry?.longitude ?: DEFAULT_LOCATION,
-                        ).first()
-                        point = point.copy(second = dbEliment.title)
-                    }
-                    onAction(MapAction.OnInfoDialog(point))
+                    onAction(MapAction.OnInfoDialog(intent.point))
                 }
             }
 
             is MapIntent.OnDeletePoint -> {
                 viewModelScope.launch {
                     deletePointUseCase.invoke(
-                        intent.point.geometry.latitude,
-                        intent.point.geometry.longitude
+                        intent.point.latitude,
+                        intent.point.longitude
                     )
                     onAction(MapAction.OnDeletePoint(intent.point))
                 }
